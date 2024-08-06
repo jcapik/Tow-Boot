@@ -10,10 +10,19 @@ let
       Tow-Boot.defconfig = "rpi_defconfig";
     };
   };
+  raspberryPi-2 = composeConfig {
+    config = {
+      device.identifier = "raspberryPi-2";
+      Tow-Boot.defconfig = "rpi_2_defconfig";
+    };
+  };
 
   configTxt = pkgs.writeText "config.txt" ''
     [pi1]
     kernel=Tow-Boot.noenv.rpi1.bin
+
+    [pi2]
+    kernel=Tow-Boot.noenv.rpi2.bin
 
     [all]
     arm_64bit=0
@@ -75,6 +84,11 @@ in
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/config/noenv.config $out/config/noenv.rpi1.config
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/config/noenv.newdefconfig $out/config/noenv.rpi1.newdefconfig
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/diff/noenv.build.diff $out/diff/noenv.rpi1.diff
+
+          cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin $out/binaries/Tow-Boot.noenv.rpi2.bin
+          cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/config/noenv.config $out/config/noenv.rpi2.config
+          cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/config/noenv.newdefconfig $out/config/noenv.rpi2.newdefconfig
+          cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/diff/noenv.build.diff $out/diff/noenv.rpi2.diff
           )
         ''
       ) { }
@@ -96,10 +110,12 @@ in
         populateCommands = ''
           cp -v ${configTxt} config.txt
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi1.bin
+          cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi2.bin
           (
           target="$PWD"
           cd ${pkgs.raspberrypifw}/share/raspberrypi/boot
           cp -v bcm*-rpi-b*.dtb "$target/"
+          cp -v bcm*-rpi-2-b.dtb "$target/"
           cp -v bootcode.bin fixup*.dat start*.elf "$target/"
           )
         '';
