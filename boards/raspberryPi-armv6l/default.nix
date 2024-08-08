@@ -51,8 +51,8 @@ in
 
     config = [
       (helpers: with helpers; {
-        # 64 MiB; the default unconfigured state is 4 MiB.
-        SYS_MALLOC_LEN = freeform ''0x4000000'';
+        # 32 MiB; the default unconfigured state is 4 MiB.
+        SYS_MALLOC_LEN = freeform ''0x2000000'';
         CMD_POWEROFF = no;
       })
 
