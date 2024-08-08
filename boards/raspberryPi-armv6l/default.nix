@@ -4,6 +4,12 @@ let
   inherit (config.helpers)
     composeConfig
   ;
+  raspberryPi-0 = composeConfig {
+    config = {
+      device.identifier = "raspberryPi-0";
+      Tow-Boot.defconfig = "rpi_0_w_defconfig";
+    };
+  };
   raspberryPi-1 = composeConfig {
     config = {
       device.identifier = "raspberryPi-1";
@@ -18,6 +24,9 @@ let
   };
 
   configTxt = pkgs.writeText "config.txt" ''
+    [pi0]
+    kernel=Tow-Boot.noenv.rpi0.bin
+
     [pi1]
     kernel=Tow-Boot.noenv.rpi1.bin
 
@@ -80,6 +89,11 @@ in
         } ''
           (PS4=" $ "; set -x
           mkdir -p $out/{binaries,config,diff}
+          cp -v ${raspberryPi-0.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin $out/binaries/Tow-Boot.noenv.rpi0.bin
+          cp -v ${raspberryPi-0.config.Tow-Boot.outputs.firmware}/config/noenv.config $out/config/noenv.rpi0.config
+          cp -v ${raspberryPi-0.config.Tow-Boot.outputs.firmware}/config/noenv.newdefconfig $out/config/noenv.rpi0.newdefconfig
+          cp -v ${raspberryPi-0.config.Tow-Boot.outputs.firmware}/diff/noenv.build.diff $out/diff/noenv.rpi0.diff
+
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin $out/binaries/Tow-Boot.noenv.rpi1.bin
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/config/noenv.config $out/config/noenv.rpi1.config
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/config/noenv.newdefconfig $out/config/noenv.rpi1.newdefconfig
@@ -109,6 +123,7 @@ in
         filesystem = "fat32";
         populateCommands = ''
           cp -v ${configTxt} config.txt
+          cp -v ${raspberryPi-0.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi0.bin
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi1.bin
           cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi2.bin
           (
