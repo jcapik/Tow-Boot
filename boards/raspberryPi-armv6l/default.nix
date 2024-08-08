@@ -114,8 +114,7 @@ in
           (
           target="$PWD"
           cd ${pkgs.raspberrypifw}/share/raspberrypi/boot
-          cp -v bcm*-rpi-b*.dtb "$target/"
-          cp -v bcm*-rpi-2-b.dtb "$target/"
+          cp -v bcm270{8,9}-rpi*.dtb "$target/"
           cp -v bootcode.bin fixup*.dat start*.elf "$target/"
           )
         '';
