@@ -22,6 +22,18 @@ let
       Tow-Boot.defconfig = "rpi_2_defconfig";
     };
   };
+  raspberryPi-3 = composeConfig {
+    config = {
+      device.identifier = "raspberryPi-3";
+      Tow-Boot.defconfig = "rpi_3_32b_defconfig";
+    };
+  };
+  raspberryPi-4 = composeConfig {
+    config = {
+      device.identifier = "raspberryPi-4";
+      Tow-Boot.defconfig = "rpi_4_32b_defconfig";
+    };
+  };
 
   configTxt = pkgs.writeText "config.txt" ''
     [pi0]
@@ -32,6 +44,12 @@ let
 
     [pi2]
     kernel=Tow-Boot.noenv.rpi2.bin
+
+    [pi3]
+    kernel=Tow-Boot.noenv.rpi3.bin
+
+    [pi4]
+    kernel=Tow-Boot.noenv.rpi4.bin
 
     [all]
     arm_64bit=0
@@ -103,6 +121,16 @@ in
           cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/config/noenv.config $out/config/noenv.rpi2.config
           cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/config/noenv.newdefconfig $out/config/noenv.rpi2.newdefconfig
           cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/diff/noenv.build.diff $out/diff/noenv.rpi2.diff
+
+          cp -v ${raspberryPi-3.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin $out/binaries/Tow-Boot.noenv.rpi3.bin
+          cp -v ${raspberryPi-3.config.Tow-Boot.outputs.firmware}/config/noenv.config $out/config/noenv.rpi3.config
+          cp -v ${raspberryPi-3.config.Tow-Boot.outputs.firmware}/config/noenv.newdefconfig $out/config/noenv.rpi3.newdefconfig
+          cp -v ${raspberryPi-3.config.Tow-Boot.outputs.firmware}/diff/noenv.build.diff $out/diff/noenv.rpi3.diff
+
+          cp -v ${raspberryPi-4.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin $out/binaries/Tow-Boot.noenv.rpi4.bin
+          cp -v ${raspberryPi-4.config.Tow-Boot.outputs.firmware}/config/noenv.config $out/config/noenv.rpi4.config
+          cp -v ${raspberryPi-4.config.Tow-Boot.outputs.firmware}/config/noenv.newdefconfig $out/config/noenv.rpi4.newdefconfig
+          cp -v ${raspberryPi-4.config.Tow-Boot.outputs.firmware}/diff/noenv.build.diff $out/diff/noenv.rpi4.diff
           )
         ''
       ) { }
@@ -126,10 +154,12 @@ in
           cp -v ${raspberryPi-0.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi0.bin
           cp -v ${raspberryPi-1.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi1.bin
           cp -v ${raspberryPi-2.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi2.bin
+          cp -v ${raspberryPi-3.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi3.bin
+          cp -v ${raspberryPi-4.config.Tow-Boot.outputs.firmware}/binaries/Tow-Boot.noenv.bin Tow-Boot.noenv.rpi4.bin
           (
           target="$PWD"
           cd ${pkgs.raspberrypifw}/share/raspberrypi/boot
-          cp -v bcm270{8,9}-rpi*.dtb "$target/"
+          cp -v bcm*-rpi*.dtb "$target/"
           cp -v bootcode.bin fixup*.dat start*.elf "$target/"
           )
         '';
